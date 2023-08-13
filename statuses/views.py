@@ -31,7 +31,8 @@ class StatusAPI(ModelViewSet):
         all_status = Status.objects.filter(
             ~Q(created_at__lt=time_threshold)).all()
         my_status = Status.objects.filter(
-            ~Q(created_at__lt=time_threshold) & ~Q(user=self.request.user))
+            ~Q(created_at__lt=time_threshold) & ~Q(user=self.request.user)
+        )
 
         contact_status = []
         for conversation in conversations:
