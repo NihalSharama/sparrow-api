@@ -17,10 +17,17 @@ def delete_otps(user_exist, mobile):
         OtpTempData.objects.filter(mobile=mobile).delete()
 
 
-def send_otp_sms(mobile, msg):
+def send_otp_sms(mobile, otp):
 
-    requests.get(
-        url=f'http://sms.domainadda.com/vendorsms/pushsms.aspx?user=kotasaketh&password=123456&msisdn={mobile}&sid=152535&msg={msg}&fl=0&gwid=2')
+    request = requests.get(
+        url=f"http://sms.domainadda.com/vendorsms/pushsms.aspx?user=kotasaketh&password=123456&msisdn={mobile}&sid=SPLCON&msg=Hi,{otp} is your OTP to register with Sparrow Let's Connect and will be valid for 10 minutes.Do not share your OTP with anyone. Have a Good Time with SPARROW.&fl=0&gwid=2")
+
+    if (request.status_code == 200 ):
+        print(request.content)
+        print(f'OTP Sent to {mobile} Successfully!')
+
+    else:
+        print('Faild to Send OTP!')
 
 
 def send_otp(user_exist, mobile, data, request_type):
@@ -31,9 +38,11 @@ def send_otp(user_exist, mobile, data, request_type):
             otp = random.randint(10000, 99999)
             otp_obj = LoginOtp(otp=otp, mobile=mobile)
             otp_obj.save()
+            # send otp
+            send_otp_sms(mobile, otp)
             return Response(
                 resp_success("OTP Sent Successfully!", {
-                    "otp": otp,
+           
                     "mobile": mobile
                 }))
         else:
@@ -51,10 +60,12 @@ def send_otp(user_exist, mobile, data, request_type):
                                   otp=otp,
                                   mobile=mobile)
             otp_obj.save()
-
+            
+            # send otp
+            send_otp_sms(mobile, otp)
             return Response(
                 resp_success("OTP Sent Successfully!", {
-                    "otp": otp,
+              
                     "mobile": mobile
                 }))
 
@@ -62,9 +73,11 @@ def send_otp(user_exist, mobile, data, request_type):
         otp = random.randint(10000, 99999)
         otp_obj = ChangeNumberOtp(otp=otp, mobile=mobile)
         otp_obj.save()
+        # send otp
+        send_otp_sms(mobile, otp)
         return Response(
             resp_success("OTP Sent Successfully!", {
-                "otp": otp,
+         
                 "mobile": mobile
             }))
 
@@ -72,9 +85,11 @@ def send_otp(user_exist, mobile, data, request_type):
         otp = random.randint(10000, 99999)
         otp_obj = DeleteUserOtp(otp=otp, mobile=mobile)
         otp_obj.save()
+        # send otp
+        send_otp_sms(mobile, otp)
         return Response(
             resp_success("OTP Sent Successfully!", {
-                "otp": otp,
+       
                 "mobile": mobile
             }))
 
